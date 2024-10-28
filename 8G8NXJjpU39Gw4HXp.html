@@ -1,0 +1,1455 @@
+<html><head><base href="https://quizzz.app/">
+<title>Quizzz - Diagramme des États</title>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsonwebtoken/dist/jsonwebtoken.min.js"></script>
+<style>
+:root {
+  --primary: #4f46e5;  
+  --secondary: #7c3aed; 
+  --background: #f8fafc;
+  --text: #111827; 
+  --success: #22c55e;
+  --warning: #eab308;
+  --error: #ef4444;
+  --info: #3b82f6;
+  --neutral: #6b7280; 
+  --surface: #ffffff;
+
+  /* Light theme (default) */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3a3;
+}
+
+/* Animation durations */
+  --animation-speed-fast: 150ms;
+  --animation-speed-normal: 300ms;
+  --animation-speed-slow: 500ms;
+  
+  /* Transitions */
+  --transition-standard: all var(--animation-speed-normal) ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background: var(--background);
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 5vw, 2rem);
+}
+
+.login-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  width: 100%;
+  max-width: 400px;
+  margin: 2rem auto;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--neutral);
+  border-radius: 0.5rem;
+  transition: var(--transition-standard);
+}
+
+.form-group input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.form-error {
+  color: var(--error);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: none;
+}
+
+.form-error.active {
+  display: block;
+}
+
+.form-action {
+  margin-top: 2rem;
+}
+
+.auth-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-standard);
+  position: relative;
+}
+
+.auth-button:hover {
+  background: var(--secondary);
+}
+
+.auth-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-links {
+  margin-top: 1.5rem;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.auth-links a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
+}
+
+.loading-spinner {
+  display: none;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading .loading-spinner {
+  display: block;
+}
+
+@keyframes spin {
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
+.diagram-container {
+  background: white;
+  padding: clamp(1rem, 3vw, 2rem);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  width: 100%;
+  max-width: min(90vw, 1200px);
+}
+
+.notification-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.notification {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: var(--primary);
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.notification.visible {
+  opacity: 1;
+}
+
+.notification.info { background: var(--info); }
+.notification.success { background: var(--success); }
+.notification.warning { background: var(--warning); }
+.notification.error { background: var(--error); }
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .notification {
+    max-width: calc(100vw - 2rem);
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .states {
+    flex-direction: column;
+    height: auto;
+    gap: 2rem;
+  }
+
+  .state {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .states {
+    flex-direction: column;
+    height: auto;
+    padding: 1rem;
+    gap: 2rem;
+  }
+
+  .state {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  .condition {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin: 0.5rem 0;
+    text-align: center;
+  }
+
+  .return-arrow {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    text-align: center;
+    margin-top: 1rem;
+  }
+}
+
+.states {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4rem 0;
+  height: 400px;
+  aria-live: polite;
+  role: status;
+}
+
+.state {
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.state.active {
+  opacity: 1;
+}
+
+.state:hover {
+  box-shadow: 0 0 10px rgba(79, 70, 229, 0.2);
+}
+
+.state h3 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.state p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.state .url {
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  width: 100%;
+  font-size: 0.7rem;
+  color: var(--secondary);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.state:hover .url {
+  opacity: 1;
+  color: var(--text);
+  background: var(--background);
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.condition {
+  position: absolute;
+  background: var(--warning);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.condition-1 {
+  top: 150px;
+  left: 300px;
+}
+
+.condition-2 {
+  top: 150px;
+  left: 550px;
+}
+
+.condition-3 {
+  top: 150px;
+  left: 800px;
+}
+
+.condition-4 {
+  top: 150px;
+  left: 1050px;
+}
+
+.return-arrow {
+  position: absolute;
+  bottom: -50px;
+  right: 50px;
+  color: var(--primary);
+  font-size: 0.9rem;
+}
+
+.waiting-room {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.2);
+  width: 300px;
+  z-index: 100;
+  display: none;
+}
+
+.waiting-room.active {
+  display: block;
+}
+
+.player-list {
+  margin: 1rem 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.player-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--background);
+  border-radius: 0.5rem;
+}
+
+.player-status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.status-connected { background: var(--primary); }
+.status-ready { background: var(--success); }
+.status-playing { background: var(--warning); }
+.status-disconnected { background: #cbd5e1; }
+
+.chat-section {
+  margin-top: 1rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
+.chat-messages {
+  height: 150px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background: var(--background);
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.chat-input-area {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.host-controls {
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.host-controls button {
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--success);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.host-controls button.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.host-controls button:hover {
+  filter: brightness(1.1);
+}
+
+.countdown-display {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8rem;
+  font-weight: bold;
+  color: var(--primary);
+  text-align: center;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.countdown-display.active {
+  opacity: 1;
+}
+
+.countdown-message {
+  font-size: 1.5rem;
+  color: var(--secondary);
+  margin-top: 1rem;
+}
+
+.start-alert {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0 0 1rem 1rem;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.start-alert.active {
+  opacity: 1;
+}
+
+.question-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px -5px rgb(0, 0, 0 / 0.2);
+  width: 80%;
+  max-width: 800px;
+  display: none;
+  z-index: 100;
+}
+
+.question-container.active {
+  display: block;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255,255,255,0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.timer-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: var(--primary);
+  width: 100%;
+  animation: timer-countdown linear forwards;
+}
+
+@keyframes timer-countdown {
+  from { width: 100%; }
+  to { width: 0; }
+}
+
+.question-content {
+  margin: 2rem 0;
+}
+
+.answer-choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.answer-choice {
+  padding: 1rem;
+  border: 2px solid var(--primary);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: var(--transition-standard);
+}
+
+.answer-choice:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.answer-choice.selected {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+.answer-choice.correct {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+.answer-choice.incorrect {
+  background: var(--error);
+  border-color: var(--error);
+  color: white;
+}
+
+.answer-status {
+  text-align: center;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 0.5rem;
+  display: none;
+}
+
+.answer-status.success {
+  display: block;
+  background: var(--success);
+  color: white;
+}
+
+.answer-status.error {
+  display: block;
+  background: var(--error);
+  color: white;
+}
+
+.scores-panel {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.player-rankings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.player-rank {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: var(--background);
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.player-rank.moved-up {
+  background-color: rgba(34, 197, 94, 0.1);
+}
+
+.player-rank.moved-down {
+  background-color: rgba(234, 179, 8, 0.1);
+}
+
+.connection-status {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.connection-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  transition: background-color 300ms ease;
+}
+
+.connection-indicator.error {
+  background: var(--error);
+}
+
+.latency-display {
+  font-size: 0.8rem;
+  color: var(--neutral);
+}
+
+.transition-screen {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px -5px rgb(0, 0, 0 / 0.2);
+  width: 80%;
+  max-width: 800px;
+  display: none;
+  z-index: 100;
+}
+
+.transition-screen.active {
+  display: block;
+}
+
+.answer-reveal {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.answer-details {
+  padding: 1rem;
+  background: var(--background);
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.player-results {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.player-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: var(--background);
+  border-radius: 0.5rem;
+}
+
+.player-result-item.correct {
+  border-left: 4px solid var(--success);
+}
+
+.player-result-item.incorrect {
+  border-left: 4px solid var(--warning);
+}
+
+.rankings-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.ranking-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: var(--background);
+  border-radius: 0.5rem;
+}
+
+.next-info {
+  text-align: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.next-countdown {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--primary);
+  margin: 1rem 0;
+}
+
+.final-results {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px -5px rgb(0, 0, 0 / 0.2);
+  width: 80%;
+  max-width: 800px;
+  display: none;
+  z-index: 100;
+}
+
+.final-results.active {
+  display: block;
+}
+
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 200px;
+  margin: 2rem 0;
+}
+
+.podium-place {
+  width: 120px;
+  position: relative;
+  margin: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.podium-block {
+  width: 100%;
+  background: var(--primary);
+  border-radius: 0.5rem 0.5rem 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 1rem;
+}
+
+.first-place { height: 180px; }
+.second-place { height: 140px; }
+.third-place { height: 100px; }
+
+.podium-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: white;
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.5rem;
+  border: 2px solid var(--success);
+}
+
+.podium-info {
+  text-align: center;
+  color: white;
+  padding: 0.5rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.stat-card {
+  background: var(--background);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--primary);
+  margin: 0.5rem 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.action-button {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: var(--transition-standard);
+  font-weight: bold;
+}
+
+.rematch-button {
+  background: var(--primary);
+  color: white;
+}
+
+.exit-button {
+  background: var(--error);
+  color: white;
+}
+
+.action-button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+[role="alert"] {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: var(--primary);
+  color: white;
+  z-index: 1000;
+}
+.notification {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.notification.visible {
+  opacity: 1;
+}
+
+.notification-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  max-width: 300px;
+  z-index: 1000;
+}
+
+.state-transition {
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.state-transition.active {
+  opacity: 1;
+}
+
+.state-notification {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0 0 1rem 1rem;
+  animation: state-notify 4s ease forwards;
+}
+
+.feedback-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  background: var(--primary);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  z-index: 1000;
+  opacity: 0;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feedback-message.show {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.feedback-message.correct {
+  background: var(--success);
+}
+
+.feedback-message.fast {
+  background: var(--warning);
+}
+
+.feedback-message.level-up {
+  background: var(--info);
+}
+
+.status-panel {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.metric-group {
+  margin-bottom: 1rem;
+}
+
+.metric {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.alerts-panel {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+</style>
+
+<div class="login-container" id="loginContainer">
+  <h2>Connexion à Quizzz</h2>
+  
+  <form id="loginForm" class="auth-form">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        required 
+        aria-required="true"
+        aria-describedby="emailError"
+      >
+      <div id="emailError" class="form-error" role="alert"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Mot de passe</label>
+      <input 
+        type="password" 
+        id="password" 
+        name="password" 
+        required 
+        aria-required="true"
+        aria-describedby="passwordError"
+      >
+      <div id="passwordError" class="form-error" role="alert"></div>
+    </div>
+
+    <div class="form-action">
+      <button type="submit" class="auth-button" id="loginButton">
+        Se connecter
+        <span class="loading-spinner" aria-hidden="true"></span>
+      </button>
+    </div>
+
+    <div class="auth-links">
+      <a href="https://quizzz.app/forgot-password" class="forgot-password">
+        Mot de passe oublié ?
+      </a>
+      <a href="https://quizzz.app/register" class="create-account">
+        Créer un compte
+      </a>
+    </div>
+  </form>
+</div>
+
+<div class="diagram-container">
+  <div class="states" aria-label="États du quiz" role="region">
+    <div class="state preparation active" aria-current="true">
+      <h3>Préparation</h3>
+      <p>Attente des joueurs</p>
+      <div class="url">api/quiz/prepare</div>
+    </div>
+    
+    <div class="state starting">
+      <h3>Démarrage</h3>
+      <p>Compte à rebours</p>
+      <div class="url">api/quiz/start</div>
+    </div>
+    
+    <div class="state question">
+      <h3>Question Active</h3>
+      <p>Affichage question</p>
+      <div class="url">api/quiz/question</div>
+    </div>
+    
+    <div class="state ending">
+      <h3>Résultats</h3>
+      <p>Transition ou Fin</p>
+      <div class="url">api/quiz/ending</div>
+    </div>
+
+    <div class="condition condition-1" aria-label="Condition de transition">
+      Tous les joueurs prêts
+    </div>
+    
+    <div class="condition condition-2" aria-label="Condition de transition">
+      Compte à rebours terminé
+    </div>
+    
+    <div class="condition condition-3" aria-label="Condition de transition">
+      Temps écoulé/Tous ont répondu
+    </div>
+    
+    <div class="condition condition-4" aria-label="Condition de transition">
+      Dernière question terminée
+    </div>
+
+    <div class="return-arrow">
+      ↩ Retour à la préparation pour nouvelle partie
+    </div>
+  </div>
+
+  <div class="waiting-room" role="dialog" aria-labelledby="waiting-room-title" aria-describedby="waiting-room-desc">
+    <h2 id="waiting-room-title">Salle d'attente</h2>
+    <p id="waiting-room-desc">En attente des autres joueurs...</p>
+    
+    <div class="join-form">
+      <input type="text" id="username" aria-label="Nom d'utilisateur" placeholder="Entrez votre nom">
+      <button id="joinButton" aria-label="Rejoindre la partie">Rejoindre</button>
+    </div>
+    
+    <div class="player-list" role="list" aria-label="Liste des joueurs">
+    </div>
+
+    <div class="chat-section">
+      <div class="chat-messages" aria-live="polite"></div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" aria-label="Message" placeholder="Tapez votre message...">
+        <button id="sendMessage" aria-label="Envoyer">Envoyer</button>
+      </div>
+    </div>
+    
+    <div class="host-controls">
+      <button id="startButton" class="active" aria-label="Démarrer la partie">
+        Démarrer la partie
+      </button>
+    </div>
+  </div>
+
+  <div class="final-results" id="final-results">
+    <h2>Résultats Finaux</h2>
+    <div class="podium">
+      <div class="podium-place first-place">
+        <div class="podium-block"></div>
+        <div class="podium-avatar">1</div>
+        <div class="podium-info">Joueur 1</div>
+      </div>
+      <div class="podium-place second-place">
+        <div class="podium-block"></div>
+        <div class="podium-avatar">2</div>
+        <div class="podium-info">Joueur 2</div>
+      </div>
+      <div class="podium-place third-place">
+        <div class="podium-block"></div>
+        <div class="podium-avatar">3</div>
+        <div class="podium-info">Joueur 3</div>
+      </div>
+    </div>
+    <div class="rematch-controls">
+      <button class="rematch-button" aria-label="Demander une revanche">
+        Revanche
+      </button>
+      <div class="rematch-status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="question-container" role="main" aria-live="polite">
+    <div class="loading-overlay">
+      <div class="loading-spinner"></div>
+      <p>Chargement de la question...</p>
+    </div>
+
+    <div class="timer-bar"></div>
+    
+    <div class="question-content">
+      <h2 id="current-question"></h2>
+      <div class="answer-choices" role="radiogroup" aria-labelledby="current-question">
+      </div>
+      <div class="answer-status" aria-live="polite"></div>
+    </div>
+
+    <div class="scores-panel">
+      <h3>Classement actuel</h3>
+      <div class="player-rankings"></div>
+    </div>
+  </div>
+
+  <div id="state-announcer" aria-live="polite" hidden></div>
+
+  <div class="connection-status" role="status" aria-live="polite">
+    <span class="connection-indicator"></span>
+    <span class="connection-text">Connecté</span>
+    <span class="reconnection-message"></span>
+  </div>
+
+  <div id="statusContainer"></div>
+</div>
+
+<div class="test-controls">
+  <div class="test-panel">
+    <h3>Load Testing Controls</h3>
+    <div class="form-group">
+      <label for="userCount">Number of Users</label>
+      <input type="number" id="userCount" value="10" min="1" max="1000">
+    </div>
+    <div class="form-group">
+      <label for="testDuration">Test Duration (seconds)</label>
+      <input type="number" id="testDuration" value="60" min="10" max="3600">
+    </div>
+    <button id="startLoadTest" class="auth-button">
+      Start Load Test
+      <span class="loading-spinner"></span>
+    </button>
+    <div id="testResults" class="test-results"></div>
+  </div>
+</div>
+
+<script>
+// New WebSocket monitoring class
+class WebSocketMonitor {
+  constructor(wsService) {
+    this.metrics = {
+      connections: 0,
+      disconnections: 0,
+      latency: [],
+      errors: [],
+      messageVolume: 0,
+      lastCheckpoint: Date.now()
+    };
+    
+    this.thresholds = {
+      maxLatency: 200, // ms
+      errorRate: 0.05, // 5%
+      disconnectRate: 0.1 // 10%
+    };
+
+    this.alerts = new Set();
+    this.setupMonitoring(wsService);
+  }
+
+  setupMonitoring(wsService) {
+    // Monitor connection events
+    wsService.addEventListener('open', () => {
+      this.metrics.connections++;
+      this.checkHealth();
+    });
+
+    wsService.addEventListener('close', () => {
+      this.metrics.disconnections++;
+      this.checkHealth();
+    });
+
+    wsService.addEventListener('message', (event) => {
+      this.metrics.messageVolume++;
+      this.recordLatency(event.latency);
+    });
+
+    wsService.addEventListener('error', (error) => {
+      this.metrics.errors.push({
+        timestamp: Date.now(),
+        error: error.message
+      });
+      this.checkHealth();
+    });
+  }
+
+  recordLatency(latency) {
+    this.metrics.latency.push(latency);
+    if (this.metrics.latency.length > 100) {
+      this.metrics.latency.shift();
+    }
+  }
+
+  checkHealth() {
+    const avgLatency = this.getAverageLatency();
+    const errorRate = this.getErrorRate();
+    const disconnectRate = this.getDisconnectRate();
+
+    if (avgLatency > this.thresholds.maxLatency) {
+      this.triggerAlert('high-latency', `High average latency: ${avgLatency}ms`);
+    }
+
+    if (errorRate > this.thresholds.errorRate) {
+      this.triggerAlert('high-error-rate', `High error rate: ${errorRate}`);
+    }
+
+    if (disconnectRate > this.thresholds.disconnectRate) {
+      this.triggerAlert('high-disconnect-rate', `High disconnect rate: ${disconnectRate}`);
+    }
+  }
+
+  triggerAlert(type, message) {
+    const alert = {
+      type,
+      message,
+      timestamp: Date.now()
+    };
+    
+    this.alerts.add(alert);
+    this.notifyAdmins(alert);
+  }
+
+  notifyAdmins(alert) {
+    console.error(`[ALERT] ${alert.message}`);
+    // Implementation for admin notification (email, dashboard, etc)
+  }
+
+  getAverageLatency() {
+    return this.metrics.latency.length === 0 ? 0 : 
+      this.metrics.latency.reduce((a, b) => a + b) / this.metrics.latency.length;
+  }
+
+  getErrorRate() {
+    return this.metrics.errors.length / this.metrics.messageVolume;
+  }
+
+  getDisconnectRate() {
+    return this.metrics.disconnections / this.metrics.connections;
+  }
+}
+
+// Usage Analytics Service
+class UsageAnalytics {
+  constructor() {
+    this.events = [];
+    this.sessionData = {
+      startTime: Date.now(),
+      interactions: 0,
+      features: new Set()
+    };
+  }
+
+  trackEvent(category, action, label = null) {
+    const event = {
+      timestamp: Date.now(),
+      category,
+      action,
+      label,
+      sessionId: this.sessionData.id
+    };
+    
+    this.events.push(event);
+    this.sessionData.interactions++;
+    
+    if (this.events.length >= 100) {
+      this.flushEvents();
+    }
+  }
+
+  trackFeatureUsage(featureId) {
+    this.sessionData.features.add(featureId);
+    this.trackEvent('feature', 'use', featureId);
+  }
+
+  async flushEvents() {
+    try {
+      await fetch('https://quizzz.app/api/analytics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          events: this.events,
+          sessionData: this.sessionData
+        })
+      });
+      this.events = [];
+    } catch (error) {
+      console.error('Failed to flush analytics:', error);
+    }
+  }
+}
+
+// Update WebSocketService constructor
+class WebSocketService {
+  constructor(options = {}) {
+    this.url = 'wss://quizzz.app/socket'; // URL WebSocket sécurisée
+    this.options = {
+      reconnectAttempts: 5,
+      reconnectInterval: 1000,
+      messageBufferSize: 100,
+      heartbeatInterval: 30000,
+      batchMessages: true,
+      batchDelay: 50,
+      ...options
+    };
+
+    this.messageQueue = [];
+    this.setupConnection();
+    this.setupHeartbeat();
+    this.monitor = new WebSocketMonitor(this);
+    this.analytics = new UsageAnalytics();
+    
+    // Add status display if in development/admin mode
+    if (options.showStatus) {
+      this.statusDisplay = new StatusDisplay(
+        document.getElementById('statusContainer')
+      );
+    }
+  }
+
+  setupHeartbeat() {
+    setInterval(() => {
+      if (this.ws?.readyState === WebSocket.OPEN) {
+        this.ws.send(JSON.stringify({ type: 'heartbeat' }));
+      }
+    }, this.options.heartbeatInterval);
+  }
+
+  send(message) {
+    const startTime = performance.now();
+    
+    if (this.options.batchMessages) {
+      this.messageQueue.push({
+        message,
+        timestamp: startTime
+      });
+      this.scheduleBatch();
+    } else {
+      this.sendImmediate(message);
+    }
+    
+    this.analytics.trackEvent('websocket', 'message-sent');
+  }
+  
+  // Other methods...
+}
+
+document.getElementById('startLoadTest').addEventListener('click', async () => {
+  const userCount = parseInt(document.getElementById('userCount').value);
+  const duration = parseInt(document.getElementById('testDuration').value) * 1000;
+  
+  const tester = new WebSocketLoadTester('wss://quizzz.app/socket');
+  const results = await tester.simulateUsers(userCount, duration);
+  
+  document.getElementById('testResults').innerHTML = `
+    <h4>Test Results</h4>
+    <p>Average Latency: ${results.latency.toFixed(2)}ms</p>
+    <p>Disconnects: ${results.disconnects}</p>
+    <p>Errors: ${results.errors}</p>
+    <p>Messages Sent: ${results.messagesSent}</p>
+    <p>Messages Received: ${results.messagesReceived}</p>
+  `;
+});
+
+// Update Question Handling Code
+document.querySelector('.answer-choices').addEventListener('click', async (e) => {
+  if (!e.target.matches('.answer-choice')) return;
+  
+  const startTime = performance.now();
+  const response = await quizService.submitAnswer({
+    questionId: currentQuestion.id,
+    answerId: e.target.dataset.id,
+    responseTime: performance.now() - startTime
+  });
+
+  const feedback = new FeedbackManager();
+  feedback.handleAnswer(response);
+
+  const playerLevel = new PlayerLevel();
+  const newLevel = playerLevel.checkLevelUp(oldScore, response.newTotalScore);
+  if (newLevel) {
+    feedback.showLevelUp(newLevel);
+  }
+
+  updateScores(response.scores);
+});
+</script>
+
+<script src="https://quizzz.app/services/apiService.js"></script>
+<script src="https://quizzz.app/services/NotificationManager.js"></script>
+<script src="https://quizzz.app/services/StateConditionChecker.js"></script>
+<script src="https://quizzz.app/services/StateManager.js"></script>
+<script src="https://quizzz.app/services/userService.js"></script>
+<script src="https://quizzz.app/services/quizService.js"></script>
+<script src="https://quizzz.app/services/scoreService.js"></script>
+<script src="https://quizzz.app/services/authService.js"></script>
+<script src="https://quizzz.app/services/WebSocketService.js"></script>
+<script src="https://quizzz.app/services/SyncService.js"></script>
+<script src="https://quizzz.app/services/FeedbackManager.js"></script>
+</html>

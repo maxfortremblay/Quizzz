@@ -23,4 +23,34 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('viewRulesButton').addEventListener('click', () => {
         window.location.href = '/rules';
     });
+
+    const loginForm = document.getElementById('loginForm');
+    const loginButton = document.getElementById('loginButton');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        loginButton.disabled = true;
+        loginButton.classList.add('loading');
+
+        const email = loginForm.email.value;
+        const password = loginForm.password.value;
+
+        try {
+            const response = await axios.post('/api/auth/login', { email, password });
+            if (response.data.success) {
+                window.location.href = '/dashboard';
+            } else {
+                emailError.textContent = response.data.message;
+                emailError.classList.add('active');
+            }
+        } catch (error) {
+            emailError.textContent = 'Erreur de connexion';
+            emailError.classList.add('active');
+        } finally {
+            loginButton.disabled = false;
+            loginButton.classList.remove('loading');
+        }
+    });
 });

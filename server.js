@@ -1,5 +1,3 @@
-require('dotenv').config(); // Charger les variables d'environnement
-
 const express = require('express');
 const path = require('path');
 const http = require('http');
@@ -9,13 +7,28 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Middleware
+// Middleware pour servir les fichiers statiques
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// Une seule route principale pour la SPA
+// Route principale pour la SPA
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
+// Vérification du type MIME pour les fichiers JavaScript
+app.get('/js/:file', (req, res, next) => {
+    const options = {
+        root: path.join(__dirname, 'public/js'),
+        headers: {
+            'Content-Type': 'application/javascript'
+        }
+    };
+    res.sendFile(req.params.file, options, (err) => {
+        if (err) {
+            next(err);
+        }
+    });
 });
 
 // Gestion des parties

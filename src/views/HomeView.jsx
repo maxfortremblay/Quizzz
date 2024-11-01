@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, Users } from 'lucide-react';
 
-const HomeView = ({ onCreateGame, onJoinGame }) => {
+const HomeView = ({ onCreateGame, onJoinGame, loading, error }) => {
   const [playerName, setPlayerName] = useState('');
   const [gameCode, setGameCode] = useState('');
 
@@ -19,10 +19,13 @@ const HomeView = ({ onCreateGame, onJoinGame }) => {
           <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Party</span>
         </h1>
 
+        {error && <div className="text-red-500 text-center">{error}</div>}
+
         <div className="bg-white rounded-xl shadow-lg p-6 transition-all hover:shadow-xl">
           <button
             onClick={onCreateGame}
             className="w-full flex items-center justify-center space-x-3"
+            disabled={loading}
           >
             <Sparkles className="w-6 h-6 text-purple-500" />
             <span className="text-xl font-semibold text-gray-800">Créer une partie</span>
@@ -40,6 +43,7 @@ const HomeView = ({ onCreateGame, onJoinGame }) => {
               onChange={(e) => setPlayerName(e.target.value)}
               className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
               placeholder="Entrez votre nom"
+              disabled={loading}
             />
           </div>
           <div className="space-y-2">
@@ -52,11 +56,13 @@ const HomeView = ({ onCreateGame, onJoinGame }) => {
               onChange={(e) => setGameCode(e.target.value)}
               className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500"
               placeholder="Ex: ABC123"
+              disabled={loading}
             />
           </div>
           <button
             onClick={handleJoinGame}
             className="w-full px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors flex items-center justify-center space-x-2"
+            disabled={loading}
           >
             <Users className="w-5 h-5" />
             <span>Rejoindre la partie</span>

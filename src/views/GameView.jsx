@@ -75,8 +75,13 @@ const QuestionCard = ({ question, onAnswer, timeLeft, hasAnswered }) => {
   );
 };
 
+import React from 'react';
+import { Trophy } from 'lucide-react';
+import QuizQuestion from '../components/game/QuizQuestion';
+
+// Ajouter PlayerScores comme composant interne
 const PlayerScores = ({ scores }) => (
-  <div className="bg-white rounded-lg shadow-md p-4">
+  <div className="bg-white rounded-lg shadow-md p-4 mt-6">
     <div className="flex items-center space-x-2 mb-4">
       <Trophy className="w-5 h-5 text-yellow-500" />
       <h3 className="font-medium text-gray-700">Classement actuel</h3>
@@ -89,26 +94,28 @@ const PlayerScores = ({ scores }) => (
             index === 0 ? 'bg-yellow-50' : 'bg-gray-50'
           }`}
         >
-          <div className="flex items-center space-x-3">
-            <span className="font-bold">{index + 1}.</span>
-            <span>{player.name}</span>
-          </div>
-          <span className="font-medium text-purple-600">
-            {player.score} pts
-          </span>
+          <span>{player.name}</span>
+          <span className="font-medium text-purple-600">{player.score} pts</span>
         </div>
       ))}
     </div>
   </div>
 );
 
-import React from 'react';
-import QuizQuestion from '../components/game/QuizQuestion';
+import { Score } from '../services/score.js';
 
-const GameView = ({ currentQuestion, onAnswer, timeLeft, score }) => {
+const GameView = ({ currentQuestion, onAnswer, timeLeft, score, onBuzzerPress, scores }) => {
+  // useEffect pour gérer l'affichage des scores
+  useEffect(() => {
+    if (scores) {
+      Score.displayScores(scores);
+    }
+  }, [scores]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 p-6">
       <div className="max-w-4xl mx-auto">
+        {/* Score actuel */}
         <div className="bg-white rounded-lg shadow-md p-4 mb-6">
           <div className="flex items-center justify-between">
             <h3 className="font-medium text-gray-700">Score</h3>
@@ -116,11 +123,26 @@ const GameView = ({ currentQuestion, onAnswer, timeLeft, score }) => {
           </div>
         </div>
 
+        {/* Question */}
         <QuizQuestion
           question={currentQuestion}
           onAnswer={onAnswer}
           timeLeft={timeLeft}
         />
+
+        {/* Conteneur pour les scores */}
+        <div id="score-container" className="mt-6"></div>
+
+        {/* Buzzer conditionnel */}
+        {currentQuestion?.type === 'buzzer' && (
+          <button 
+            onClick={() => onBuzzerPress('playerId')} 
+            className="mt-4 w-full bg-purple-600 text-white py-4 rounded-xl font-semibold
+              hover:bg-purple-700 transition-colors"
+          >
+            Buzzer
+          </button>
+        )}
       </div>
     </div>
   );

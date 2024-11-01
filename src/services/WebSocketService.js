@@ -21,21 +21,25 @@ class WebSocketService {
 
       this.socket.on('error', (error) => {
         console.error('WebSocket error:', error);
+        this.emit('error', error);
       });
 
       this.initializeGameEvents();
     } catch (error) {
       console.error('Connection error:', error);
+      this.emit('error', error);
     }
   }
 
   initializeGameEvents() {
     this.socket.on('room:created', (data) => {
-      this.emit('room:status', { status: 'created', roomCode: data.roomCode });
+      console.log('Room created:', data);
+      this.emit('game-created', data);
     });
 
     this.socket.on('room:joined', (data) => {
-      this.emit('room:status', { status: 'joined', players: data.players });
+      console.log('Room joined:', data);
+      this.emit('player-joined', data);
     });
 
     this.socket.on('game:question', (data) => {
@@ -49,12 +53,14 @@ class WebSocketService {
 
   async createRoom() {
     if (this.socket) {
+      console.log('Emitting room:create event');
       this.socket.emit('room:create', { clientId: this.clientId, timestamp: Date.now() });
     }
   }
 
   async joinRoom(roomCode, playerName) {
     if (this.socket) {
+      console.log('Emitting room:join event');
       this.socket.emit('room:join', { roomCode, playerName, clientId: this.clientId, timestamp: Date.now() });
     }
   }

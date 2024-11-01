@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Timer, Volume2, Image as ImageIcon } from 'lucide-react';
+import { Timer } from 'lucide-react';
 
 const QuestionTypes = {
   TEXT: 'text',
@@ -36,8 +36,7 @@ const QuizQuestion = ({ question, onAnswer, timeLeft }) => {
               onClick={() => setIsPlaying(!isPlaying)}
               className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
-              <Volume2 className="w-5 h-5" />
-              <span>{isPlaying ? 'Pause' : 'Écouter'}</span>
+              {isPlaying ? 'Pause' : 'Écouter'}
             </button>
           </div>
         );
@@ -53,9 +52,9 @@ const QuizQuestion = ({ question, onAnswer, timeLeft }) => {
           {question.type !== QuestionTypes.TEXT && (
             <div className="p-2 bg-gray-100 rounded-lg">
               {question.type === QuestionTypes.IMAGE ? (
-                <ImageIcon className="w-5 h-5 text-gray-600" />
+                <img src={`/media/images/${question.media}`} alt={question.question} className="w-5 h-5" />
               ) : (
-                <Volume2 className="w-5 h-5 text-gray-600" />
+                <audio controls src={`/media/audio/${question.media}`} className="w-5 h-5" />
               )}
             </div>
           )}

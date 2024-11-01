@@ -1,82 +1,15 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QuizzParty</title>
-
-  <!-- Polices -->
-  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <!-- Styles -->
+  <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/premium-style.css">
 </head>
 <body>
-    <div class="animated-background">
-        <div class="bg-gradient"></div>
-    </div>
-    <div class="particles"></div>
-    <div id="app">
-        <!-- Vue Accueil -->
-        <section id="home-view" class="view active">
-            <h1>QuizzParty</h1>
-            <div class="actions">
-                <button class="button" id="createGameBtn">Créer une partie</button>
-                <div class="join-game">
-                    <div class="input-group">
-                        <input type="text" id="gameCodeInput" placeholder="Code de la partie">
-                    </div>
-                    <div class="input-group">
-                        <input type="text" id="playerNameInput" placeholder="Votre nom">
-                    </div>
-                    <button class="button secondary" id="joinGameBtn">Rejoindre</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Vue Sélection Quiz -->
-        <section id="quiz-selection-view" class="view">
-            <h2>Sélectionner un Quiz</h2>
-            <div id="quizList"></div>
-        </section>
-
-        <!-- Vue Salle d'Attente -->
-        <section id="waiting-view" class="view">
-            <h2>Salle d'attente</h2>
-            <div id="roomCode"></div>
-            <div id="playersList" class="players-list"></div>
-            <button class="button host-only" id="startGameBtn">Démarrer la partie</button>
-        </section>
-
-        <!-- Vue Question -->
-        <section id="question-view" class="view">
-            <div class="question-card">
-                <div id="mediaContent"></div>
-                <h2 id="questionText"></h2>
-                <div id="answerButtons" class="answers-grid"></div>
-            </div>
-            <div class="timer-container">
-                <div class="timer-progress"></div>
-            </div>
-        </section>
-
-        <!-- Vue Scores -->
-        <section id="scores-view" class="view">
-            <h2>Scores</h2>
-            <div id="scoresList"></div>
-        </section>
-
-        <!-- Vue Résultats Finaux -->
-        <section id="final-view" class="view">
-            <h2>Résultats Finaux</h2>
-            <div id="podium"></div>
-            <button id="newGameBtn" class="button">Nouvelle Partie</button>
-        </section>
-    </div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/premium-animations.js"></script>
-    <script src="/js/gameManager.js"></script>
-    <script src="/js/WebSocketService.js"></script>
+  <div id="root"></div>
+  <script src="/js/premium-animation.js"></script>
+  <script src="/js/index.js"></script>
 </body>
 </html>

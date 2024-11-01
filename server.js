@@ -1,3 +1,5 @@
+require('dotenv').config(); // Charger les variables d'environnement
+
 const express = require('express');
 const path = require('path');
 const http = require('http');
@@ -90,6 +92,19 @@ io.on('connection', (socket) => {
                     players: Array.from(room.players.values())
                 });
             }
+        }
+    });
+
+    // Arrêter la partie
+    socket.on('stop-game', (code) => {
+        const room = gameRooms.get(code);
+        if (room && room.host === socket.id) {
+            const scores = Array.from(room.players.values()).map(player => ({
+                playerName: player.name,
+                points: player.score
+            }));
+            io.to(code).emit('game-stopped', { scores });
+            gameRooms.delete(code);
         }
     });
 

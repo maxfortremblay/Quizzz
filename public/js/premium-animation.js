@@ -1,3 +1,4 @@
+// Premium Animation Manager
 class PremiumAnimationManager {
     constructor() {
         this.init();

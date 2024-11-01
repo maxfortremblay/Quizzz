@@ -1,16 +1,33 @@
-// data/quizzes.json
-[
-  {
-    "id": 1,
-    "title": "Quiz sur les capitales",
-    "questions": [
-      {
-        "question": "Quelle est la capitale de la France ?",
-        "options": ["Paris", "Londres", "Berlin", "Madrid"],
-        "answer": "Paris"
-      }
-      // Autres questions...
-    ]
-  }
-  // Autres quiz...
-]
+{
+  "quizzes": [
+    {
+      "id": "quiz1",
+      "name": "Premier Quiz",
+      "questions": [
+        {
+          "type": "text",
+          "question": "Quelle est la capitale de la France?",
+          "answers": ["Paris", "Londres", "Berlin", "Madrid"],
+          "correctAnswer": "Paris",
+          "order": 1
+        },
+        {
+          "type": "image",
+          "question": "Quelle est cette image?",
+          "answers": ["Chat", "Chien", "Lapin", "Oiseau"],
+          "correctAnswer": "Chat",
+          "order": 2,
+          "media": "chat.jpg"
+        },
+        {
+          "type": "audio",
+          "question": "Quel est ce son?",
+          "answers": ["Piano", "Guitare", "Violon", "Flûte"],
+          "correctAnswer": "Piano",
+          "order": 3,
+          "media": "piano.mp3"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,364 @@
+/* Variables et réinitialisation */
+:root {
+  /* Palette de couleurs pastel */
+  --primary: #A5B4FC;      /* Bleu lavande */
+  --secondary: #FCD5CE;    /* Rose pêche */
+  --accent: #B9F3E4;       /* Menthe */
+  --danger: #FDA4AF;       /* Rose corail */
+  --success: #86EFAC;      /* Vert pastel */
+  --background: #F8FAFC;   /* Blanc cassé */
+  --text: #475569;         /* Gris slate */
+  --text-light: #94A3B8;   /* Gris clair */
+  
+  /* Ombres et effets */
+  --shadow-sm: 0 2px 4px rgba(148, 163, 184, 0.1);
+  --shadow-md: 0 4px 6px rgba(148, 163, 184, 0.1), 0 2px 4px rgba(148, 163, 184, 0.06);
+  --shadow-lg: 0 10px 15px rgba(148, 163, 184, 0.1), 0 4px 6px rgba(148, 163, 184, 0.05);
+  
+  /* Transitions */
+  --transition: all 0.3s ease;
+}
+
+/* Styles de base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* Container principal */
+#app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+/* Vues */
+.view {
+  display: none;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: var(--transition);
+}
+
+.view.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* En-têtes */
+h1, h2 {
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(120deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Boutons */
+.button {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.button.secondary {
+  background: white;
+  color: var(--text);
+  border: 2px solid var(--primary);
+}
+
+/* Formulaires */
+.input-group {
+  margin-bottom: 1rem;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  background: white;
+  color: var(--text);
+  transition: var(--transition);
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Vue d'accueil */
+#home-view {
+  text-align: center;
+  padding: 2rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 400px;
+  margin: 2rem auto;
+}
+
+/* Salle d'attente */
+#waiting-view {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+}
+
+#roomCode {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-align: center;
+  padding: 1rem;
+  background: var(--background);
+  border-radius: 12px;
+  margin: 1rem 0;
+  letter-spacing: 0.5rem;
+}
+
+#playersList {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.player-item {
+  background: var(--background);
+  padding: 1rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: var(--transition);
+}
+
+.player-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+/* Vue Quiz */
+.question-container {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-lg);
+}
+
+#mediaContent {
+  max-width: 100%;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.answers-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin-top: 2rem;
+}
+
+.answer-option {
+  background: var(--background);
+  padding: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.answer-option:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  background: white;
+}
+
+.answer-option::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(45deg);
+  transition: transform 0.6s;
+}
+
+.answer-option:hover::after {
+  transform: rotate(45deg) translate(50%, 50%);
+}
+
+/* Timer amélioré */
+.timer-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.timer-progress {
+  position: relative;
+}
+
+.timer-progress::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: timerShine 2s linear infinite;
+}
+
+@keyframes timerShine {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+/* Effet de profondeur pour les cartes */
+.card-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.card-3d-content {
+  transform: translateZ(20px);
+  transition: transform 0.3s ease-out;
+}
+
+/* Effet de victoire */
+.winner-card {
+  animation: winnerPulse 2s infinite;
+  background: linear-gradient(135deg, var(--success), var(--primary));
+}
+
+@keyframes winnerPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Notifications améliorées */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  background: var(--surface-1);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(100%);
+  opacity: 0;
+  z-index: 1000;
+}
+
+.notification.show {
+  animation: notificationSlide 0.3s forwards;
+}
+
+@keyframes notificationSlide {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Effets de lueur */
+.glowing {
+  position: relative;
+  overflow: hidden;
+}
+
+.glowing::before {
+  content: '';
+  position: absolute;
+  top: var(--glow-y, 50%);
+  left: var(--glow-x, 50%);
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Effets de vague */
+.wave-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Particules de célébration */
+.celebration-particle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Responsive Design amélioré */
+@media (max-width: 768px) {
+  .card-3d, .card-3d-content {
+    transform: none !important;
+  }
+  .particles {
+    display: none;
+  }
+}
+
+/* Optimisations de performance */
+@media (prefers-reduced-motion) {
+  .animation-heavy {
+    animation: none !important;
+    transform: none !important;
+  }
+}

@@ -1,0 +1,16 @@
+// data/quizzes.json
+[
+  {
+    "id": 1,
+    "title": "Quiz sur les capitales",
+    "questions": [
+      {
+        "question": "Quelle est la capitale de la France ?",
+        "options": ["Paris", "Londres", "Berlin", "Madrid"],
+        "answer": "Paris"
+      }
+      // Autres questions...
+    ]
+  }
+  // Autres quiz...
+]

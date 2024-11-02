@@ -11,24 +11,12 @@ const io = socketIo(server);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
+// Définir /assets comme route pour les images, JavaScript et CSS
+app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
+
 // Route principale pour la SPA
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
-});
-
-// Vérification du type MIME pour les fichiers JavaScript
-app.get('/js/:file', (req, res, next) => {
-    const options = {
-        root: path.join(__dirname, 'public/js'),
-        headers: {
-            'Content-Type': 'application/javascript'
-        }
-    };
-    res.sendFile(req.params.file, options, (err) => {
-        if (err) {
-            next(err);
-        }
-    });
 });
 
 // Gestion des parties

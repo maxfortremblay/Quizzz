@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const FinalView = ({ scores, roomCode, onPlayAgain, onBackToHome }) => {
   return (
@@ -18,7 +18,9 @@ const FinalView = ({ scores, roomCode, onPlayAgain, onBackToHome }) => {
                 className="p-3 bg-gray-50 rounded-lg flex items-center space-x-3"
               >
                 <span className="flex-1">{score.playerName}</span>
-                <span className="font-medium text-gray-800">{score.points} points</span>
+                <span className="font-medium text-gray-800">
+                  {score.points} points
+                </span>
               </div>
             ))}
           </div>

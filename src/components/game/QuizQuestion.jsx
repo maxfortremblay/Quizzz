@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Timer } from 'lucide-react';
+import React, { useState } from "react";
+import { Timer } from "lucide-react";
 
 const QuestionTypes = {
-  TEXT: 'text',
-  IMAGE: 'image',
-  AUDIO: 'audio',
-  MULTIPLE: 'multiple'
+  TEXT: "text",
+  IMAGE: "image",
+  AUDIO: "audio",
+  MULTIPLE: "multiple",
 };
 
 const QuizQuestion = ({ question, onAnswer, timeLeft }) => {
@@ -36,7 +36,7 @@ const QuizQuestion = ({ question, onAnswer, timeLeft }) => {
               onClick={() => setIsPlaying(!isPlaying)}
               className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
-              {isPlaying ? 'Pause' : 'Écouter'}
+              {isPlaying ? "Pause" : "Écouter"}
             </button>
           </div>
         );
@@ -52,13 +52,23 @@ const QuizQuestion = ({ question, onAnswer, timeLeft }) => {
           {question.type !== QuestionTypes.TEXT && (
             <div className="p-2 bg-gray-100 rounded-lg">
               {question.type === QuestionTypes.IMAGE ? (
-                <img src={`/media/images/${question.media}`} alt={question.question} className="w-5 h-5" />
+                <img
+                  src={`/media/images/${question.media}`}
+                  alt={question.question}
+                  className="w-5 h-5"
+                />
               ) : (
-                <audio controls src={`/media/audio/${question.media}`} className="w-5 h-5" />
+                <audio
+                  controls
+                  src={`/media/audio/${question.media}`}
+                  className="w-5 h-5"
+                />
               )}
             </div>
           )}
-          <span className="text-sm text-gray-500">Question {question.order}/10</span>
+          <span className="text-sm text-gray-500">
+            Question {question.order}/10
+          </span>
         </div>
         <div className="flex items-center space-x-2 text-orange-500">
           <Timer className="w-5 h-5" />
@@ -68,7 +78,9 @@ const QuizQuestion = ({ question, onAnswer, timeLeft }) => {
 
       <div className="space-y-6">
         {renderMediaContent()}
-        <h2 className="text-xl font-semibold text-gray-800">{question.question}</h2>
+        <h2 className="text-xl font-semibold text-gray-800">
+          {question.question}
+        </h2>
 
         <div className="grid grid-cols-1 gap-4">
           {question.answers.map((answer, index) => (
@@ -77,8 +89,8 @@ const QuizQuestion = ({ question, onAnswer, timeLeft }) => {
               onClick={() => handleAnswerSelect(answer)}
               className={`p-4 rounded-lg text-left transition-all ${
                 selectedAnswer === answer
-                  ? 'bg-purple-100 border-2 border-purple-500'
-                  : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
+                  ? "bg-purple-100 border-2 border-purple-500"
+                  : "bg-gray-50 border-2 border-transparent hover:bg-gray-100"
               }`}
             >
               <div className="flex items-center space-x-3">

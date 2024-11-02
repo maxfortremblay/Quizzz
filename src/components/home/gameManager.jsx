@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import WebSocketService from '../../services/WebSocketService';
+import React, { useState, useEffect } from "react";
+import WebSocketService from "../../services/WebSocketService";
 
 const GameManager = () => {
-  const [currentView, setCurrentView] = useState('home');
+  const [currentView, setCurrentView] = useState("home");
   const [gameState, setGameState] = useState({
     roomCode: null,
     players: [],
-    isHost: false
+    isHost: false,
   });
 
   const webSocket = new WebSocketService();
@@ -14,17 +14,17 @@ const GameManager = () => {
   useEffect(() => {
     webSocket.connect();
 
-    webSocket.on('game-created', (data) => {
-      setGameState(prev => ({ ...prev, roomCode: data.roomCode }));
-      setCurrentView('waiting');
+    webSocket.on("game-created", (data) => {
+      setGameState((prev) => ({ ...prev, roomCode: data.roomCode }));
+      setCurrentView("waiting");
     });
 
-    webSocket.on('player-joined', (data) => {
-      setGameState(prev => ({ ...prev, players: data.players }));
+    webSocket.on("player-joined", (data) => {
+      setGameState((prev) => ({ ...prev, players: data.players }));
     });
 
-    webSocket.on('game-started', () => {
-      setCurrentView('game');
+    webSocket.on("game-started", () => {
+      setCurrentView("game");
     });
 
     return () => {
@@ -34,7 +34,7 @@ const GameManager = () => {
 
   const handleCreateGame = () => {
     webSocket.createRoom();
-    setGameState(prev => ({ ...prev, isHost: true }));
+    setGameState((prev) => ({ ...prev, isHost: true }));
   };
 
   const handleJoinGame = ({ playerName, gameCode }) => {
@@ -42,39 +42,39 @@ const GameManager = () => {
   };
 
   const handleStopGame = () => {
-    webSocket.emit('stop-game');
-    setCurrentView('final');
+    webSocket.emit("stop-game");
+    setCurrentView("final");
   };
 
   const handleRestartGame = () => {
     setGameState({
       roomCode: null,
       players: [],
-      isHost: false
+      isHost: false,
     });
-    setCurrentView('home');
+    setCurrentView("home");
   };
 
   const renderView = () => {
     switch (currentView) {
-      case 'home':
+      case "home":
         return (
-          <HomeView 
+          <HomeView
             onCreateGame={handleCreateGame}
             onJoinGame={handleJoinGame}
           />
         );
-      case 'waiting':
+      case "waiting":
         return (
-          <WaitingView 
+          <WaitingView
             {...gameState}
-            onStartGame={() => webSocket.emit('start-game')}
+            onStartGame={() => webSocket.emit("start-game")}
             onStopGame={handleStopGame}
           />
         );
-      case 'game':
+      case "game":
         return <QuizManager webSocket={webSocket} />;
-      case 'final':
+      case "final":
         return (
           <FinalView
             scores={gameState.scores}
@@ -88,11 +88,7 @@ const GameManager = () => {
     }
   };
 
-  return (
-    <div className="app">
-      {renderView()}
-    </div>
-  );
+  return <div className="app">{renderView()}</div>;
 };
 
 export default GameManager;

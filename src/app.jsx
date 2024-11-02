@@ -1,51 +1,61 @@
-import React, { useState, useEffect, useRef } from 'react';
-import HomeView from './views/HomeView';
-import WaitingView from './views/waitingview';
-import GameView from './views/GameView';
-import FinalView from './views/FinalView';
-import QuizManager from './components/game/QuizManager';
-import WebSocketService from './services/WebSocketService';
-import NotificationManager from './services/NotificationManager';
+import React, { useState, useEffect, useRef } from "react";
+import HomeView from "./views/HomeView";
+import WaitingView from "./views/Waitingview";
+import GameView from "./views/GameView";
+import FinalView from "./views/FinalView";
+import QuizManager from "./components/game/QuizManager";
+import WebSocketService from "./services/WebSocketService";
+import NotificationManager from "./services/notificationManager";
+import ScoreManager from "./services/score";
+import StateManager from "./services/stateManager";
 
 const App = () => {
-  const [view, setView] = useState('home');
+  const [view, setView] = useState("home");
   const [gameState, setGameState] = useState({
     scores: [],
-    roomCode: '',
+    roomCode: "",
     error: null,
     loading: true
   });
 
   const [wsService] = useState(() => new WebSocketService());
+  const notificationManager = useRef(new NotificationManager());
+  const apiService = useRef(new ApiService());
+  const scoreManager = useRef(new ScoreManager());
+  const stateManager = useRef(new StateManager());
 
   useEffect(() => {
     const handleConnection = () => {
-      console.log('Connecté au serveur');
-      setGameState(prev => ({ ...prev, loading: false, error: null }));
+      console.log("Connecté au serveur");
+      setGameState((prev) => ({ ...prev, loading: false, error: null }));
     };
 
     const handleError = (error) => {
-      console.error('Erreur WebSocket:', error);
-      setGameState(prev => ({ ...prev, loading: false, error: error.message }));
+      console.error("Erreur WebSocket:", error);
+      setGameState((prev) => ({
+        ...prev,
+        loading: false,
+        error: error.message
+      }));
     };
 
-    wsService.on('connect', handleConnection);
-    wsService.on('error', handleError);
+    wsService.on("connect", handleConnection);
+    wsService.on("error", handleError);
 
     wsService.connect().catch(handleError);
 
     return () => {
-      wsService.off('connect', handleConnection);
-      wsService.off('error', handleError);
+      wsService.off("connect", handleConnection);
+      wsService.off("error", handleError);
       wsService.disconnect();
     };
   }, [wsService]);
 
   const handleRestartGame = () => {
-    setView('home');
+    setView("home");
     setGameState({
       scores: [],
-      roomCode: '',
+      roomCode: "",
       error: null,
       loading: false
     });
@@ -61,13 +71,13 @@ const App = () => {
     }
 
     switch (view) {
-      case 'home':
-        return <HomeView onStartGame={() => setView('game')} />;
-      case 'waiting':
+      case "home":
+        return <HomeView onStartGame={() => setView("game")} />;
+      case "waiting":
         return <WaitingView />;
-      case 'game':
+      case "game":
         return <QuizManager webSocket={wsService} />;
-      case 'final':
+      case "final":
         return (
           <FinalView
             scores={gameState.scores}
@@ -81,11 +91,7 @@ const App = () => {
     }
   };
 
-  return (
-    <div className="app">
-      {renderView()}
-    </div>
-  );
+  return <div className="app">{renderView()}</div>;
 };
 
 export default App;

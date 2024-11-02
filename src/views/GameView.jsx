@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Timer, Trophy, AlertCircle, Users } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Timer, Trophy, AlertCircle, Users } from "lucide-react";
 
 const QuestionCard = ({ question, onAnswer, timeLeft, hasAnswered }) => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -57,9 +57,9 @@ const QuestionCard = ({ question, onAnswer, timeLeft, hasAnswered }) => {
               disabled={hasAnswered}
               className={`p-4 rounded-lg text-left transition-all ${
                 selectedAnswer === answer
-                  ? 'bg-purple-100 border-2 border-purple-500'
-                  : 'bg-gray-50 border-2 border-transparent hover:bg-gray-100'
-              } ${hasAnswered ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                  ? "bg-purple-100 border-2 border-purple-500"
+                  : "bg-gray-50 border-2 border-transparent hover:bg-gray-100"
+              } ${hasAnswered ? "cursor-not-allowed" : "cursor-pointer"}`}
             >
               <div className="flex items-center space-x-3">
                 <span className="w-8 h-8 flex items-center justify-center rounded-full bg-white border-2 border-gray-200 font-medium text-gray-600">
@@ -75,9 +75,9 @@ const QuestionCard = ({ question, onAnswer, timeLeft, hasAnswered }) => {
   );
 };
 
-import React from 'react';
-import { Trophy } from 'lucide-react';
-import QuizQuestion from '../components/game/QuizQuestion';
+import React from "react";
+import { Trophy } from "lucide-react";
+import QuizQuestion from "../components/game/QuizQuestion";
 
 // Ajouter PlayerScores comme composant interne
 const PlayerScores = ({ scores }) => (
@@ -91,20 +91,29 @@ const PlayerScores = ({ scores }) => (
         <div
           key={player.id}
           className={`p-3 rounded-lg flex items-center justify-between ${
-            index === 0 ? 'bg-yellow-50' : 'bg-gray-50'
+            index === 0 ? "bg-yellow-50" : "bg-gray-50"
           }`}
         >
           <span>{player.name}</span>
-          <span className="font-medium text-purple-600">{player.score} pts</span>
+          <span className="font-medium text-purple-600">
+            {player.score} pts
+          </span>
         </div>
       ))}
     </div>
   </div>
 );
 
-import { Score } from '../services/score.js';
+import { Score } from "../services/score.js";
 
-const GameView = ({ currentQuestion, onAnswer, timeLeft, score, onBuzzerPress, scores }) => {
+const GameView = ({
+  currentQuestion,
+  onAnswer,
+  timeLeft,
+  score,
+  onBuzzerPress,
+  scores,
+}) => {
   // useEffect pour gérer l'affichage des scores
   useEffect(() => {
     if (scores) {
@@ -134,9 +143,9 @@ const GameView = ({ currentQuestion, onAnswer, timeLeft, score, onBuzzerPress, s
         <div id="score-container" className="mt-6"></div>
 
         {/* Buzzer conditionnel */}
-        {currentQuestion?.type === 'buzzer' && (
-          <button 
-            onClick={() => onBuzzerPress('playerId')} 
+        {currentQuestion?.type === "buzzer" && (
+          <button
+            onClick={() => onBuzzerPress("playerId")}
             className="mt-4 w-full bg-purple-600 text-white py-4 rounded-xl font-semibold
               hover:bg-purple-700 transition-colors"
           >

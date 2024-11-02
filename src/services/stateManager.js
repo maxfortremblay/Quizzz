@@ -1,6 +1,6 @@
 export default class StateManager {
   constructor() {
-    this.currentState = 'initial';
+    this.currentState = "initial";
   }
 
   async transitionTo(newState) {

@@ -1,25 +1,25 @@
-document.addEventListener('DOMContentLoaded', () => {
-    loadScores();
+document.addEventListener("DOMContentLoaded", () => {
+  loadScores();
 });
 
 async function loadScores() {
-    try {
-        const response = await fetch('/api/scores');
-        const scores = await response.json();
-        displayScores(scores);
-    } catch (error) {
-        console.error('Erreur lors du chargement des scores', error);
-    }
+  try {
+    const response = await fetch("/api/scores");
+    const scores = await response.json();
+    displayScores(scores);
+  } catch (error) {
+    console.error("Erreur lors du chargement des scores", error);
+  }
 }
 
 function displayScores(scores) {
-    const scoreContainer = document.getElementById('score-container');
-    scoreContainer.innerHTML = '';
-    scores.forEach(score => {
-        const scoreElement = document.createElement('div');
-        scoreElement.innerText = `Joueur: ${score.username}, Score: ${score.points}`;
-        scoreContainer.appendChild(scoreElement);
-    });
+  const scoreContainer = document.getElementById("score-container");
+  scoreContainer.innerHTML = "";
+  scores.forEach((score) => {
+    const scoreElement = document.createElement("div");
+    scoreElement.innerText = `Joueur: ${score.username}, Score: ${score.points}`;
+    scoreContainer.appendChild(scoreElement);
+  });
 }
 
 export default class Score {
@@ -30,20 +30,20 @@ export default class Score {
 
   static async fetchScores() {
     try {
-      const response = await fetch('/api/scores');
+      const response = await fetch("/api/scores");
       const scores = await response.json();
-      return scores.map(score => new Score(score.username, score.points));
+      return scores.map((score) => new Score(score.username, score.points));
     } catch (error) {
-      console.error('Erreur lors du chargement des scores', error);
+      console.error("Erreur lors du chargement des scores", error);
       return [];
     }
   }
 
   static displayScores(scores) {
-    const scoreContainer = document.getElementById('score-container');
-    scoreContainer.innerHTML = '';
-    scores.forEach(score => {
-      const scoreElement = document.createElement('div');
+    const scoreContainer = document.getElementById("score-container");
+    scoreContainer.innerHTML = "";
+    scores.forEach((score) => {
+      const scoreElement = document.createElement("div");
       scoreElement.innerText = `Joueur: ${score.username}, Score: ${score.points}`;
       scoreContainer.appendChild(scoreElement);
     });

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Users } from 'lucide-react';
+import React from "react";
+import { Users } from "lucide-react";
 
 const PlayerCard = ({ player, isHost }) => (
   <div className="p-4 bg-white rounded-lg shadow-md flex items-center justify-between">
@@ -15,7 +15,13 @@ const PlayerCard = ({ player, isHost }) => (
   </div>
 );
 
-const WaitingView = ({ roomCode, players, onStartGame, onStopGame, isHost }) => {
+const WaitingView = ({
+  roomCode,
+  players,
+  onStartGame,
+  onStopGame,
+  isHost,
+}) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 p-6">
       <div className="max-w-2xl mx-auto">
@@ -25,7 +31,8 @@ const WaitingView = ({ roomCode, players, onStartGame, onStopGame, isHost }) => 
               Code de la partie : {roomCode}
             </h2>
             <p className="text-gray-600 mt-2">
-              Partagez ce code avec vos amis pour qu'ils puissent rejoindre la partie
+              Partagez ce code avec vos amis pour qu'ils puissent rejoindre la
+              partie
             </p>
           </div>
 
@@ -45,7 +52,9 @@ const WaitingView = ({ roomCode, players, onStartGame, onStopGame, isHost }) => 
                   <div className="w-2 h-2 bg-green-500 rounded-full" />
                   <span className="flex-1">{player.name}</span>
                   {player.isHost && (
-                    <span className="text-sm text-purple-600 font-medium">Hôte</span>
+                    <span className="text-sm text-purple-600 font-medium">
+                      Hôte
+                    </span>
                   )}
                 </div>
               ))}

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Sparkles, Users } from 'lucide-react';
+import React, { useState } from "react";
+import { Sparkles, Users } from "lucide-react";
 
 const HomeView = ({ onCreateGame, onJoinGame, loading, error }) => {
-  const [playerName, setPlayerName] = useState('');
-  const [gameCode, setGameCode] = useState('');
+  const [playerName, setPlayerName] = useState("");
+  const [gameCode, setGameCode] = useState("");
 
   const handleJoinGame = () => {
     if (playerName && gameCode) {
@@ -15,8 +15,12 @@ const HomeView = ({ onCreateGame, onJoinGame, loading, error }) => {
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 p-6">
       <div className="max-w-2xl mx-auto space-y-8">
         <h1 className="text-center text-6xl font-bold mb-12">
-          <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Quizz</span>
-          <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Party</span>
+          <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            Quizz
+          </span>
+          <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            Party
+          </span>
         </h1>
 
         {error && <div className="text-red-500 text-center">{error}</div>}
@@ -28,7 +32,9 @@ const HomeView = ({ onCreateGame, onJoinGame, loading, error }) => {
             disabled={loading}
           >
             <Sparkles className="w-6 h-6 text-purple-500" />
-            <span className="text-xl font-semibold text-gray-800">Créer une partie</span>
+            <span className="text-xl font-semibold text-gray-800">
+              Créer une partie
+            </span>
           </button>
         </div>
 

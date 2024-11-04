@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import HomeView from "./views/HomeView";
-import WaitingView from "./views/Waitingview";
+import WaitingView from "./views/waitingview";
 import GameView from "./views/GameView";
 import FinalView from "./views/FinalView";
 import QuizManager from "./components/game/QuizManager";
 import WebSocketService from "./services/WebSocketService";
-import NotificationManager from "./services/notificationManager";
 import ScoreManager from "./services/score";
 import StateManager from "./services/stateManager";
 
@@ -19,10 +18,7 @@ const App = () => {
   });
 
   const [wsService] = useState(() => new WebSocketService());
-  const notificationManager = useRef(new NotificationManager());
-  const apiService = useRef(new ApiService());
-  const scoreManager = useRef(new ScoreManager());
-  const stateManager = useRef(new StateManager());
+  const notificationManager = useRef();
 
   useEffect(() => {
     const handleConnection = () => {

@@ -9,35 +9,27 @@
     />
     <title>QuizzParty</title>
 
-    <!-- Styles -->
+    <!-- Styles de base et premium -->
     <link href="css/style.css" rel="stylesheet" />
     <link href="css/premium-style.css" rel="stylesheet" />
-
-    <!-- React Development -->
-    <script
-      src="https://unpkg.com/react@17/umd/react.development.js"
-      crossorigin
-    ></script>
-    <script
-      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
-      crossorigin
-    ></script>
   </head>
   <body>
-    <!-- Root pour React -->
+    <!-- Container principal React -->
     <div id="root"></div>
 
-    <!-- Elements pour les notifications -->
+    <!-- Container notifications -->
     <div id="message"></div>
 
-    <!-- Buttons temporaires (seront gérés par React) -->
-    <button id="startQuizButton">Start Quiz</button>
-    <button id="viewRulesButton">View Rules</button>
-
     <!-- Scripts -->
+    <!-- Point d'entrée principal -->
     <script type="module" src="js/index.js"></script>
+
+    <!-- Services et utilitaires -->
     <script type="module" src="js/client.js"></script>
     <script type="module" src="js/script.js"></script>
     <script type="module" src="js/premium-animation.js"></script>
+
+    <!-- React app bundle (généré par build) -->
+    <script type="module" src="/dist/bundle.js"></script>
   </body>
 </html>
